@@ -1,339 +1,445 @@
 """
-CUN – Analizador de Calendarios Académicos
-Los PDFs se cargan automáticamente desde la carpeta /pdfs
+CUN – Calendarios Académicos
+Fechas tomadas directamente del tablero oficial.
 """
 
-import os, re, io
-import pdfplumber
-import pandas as pd
 import streamlit as st
 from datetime import date
 
-# ── Configuración ─────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="CUN – Calendarios Académicos",
+    page_title="CUN – Calendarios",
     page_icon="📅",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;700&display=swap');
-html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
-.stApp { background: #0f1117; color: #e8e8e8; }
-[data-testid="stSidebar"] { background: #161b27 !important; border-right: 1px solid #2a2f3e; }
-.titulo { font-family:'Space Mono',monospace; font-size:2rem; font-weight:700;
-          background:linear-gradient(135deg,#00d4aa,#0099ff);
-          -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
-.sub    { color:#6b7280; font-size:0.9rem; font-family:'Space Mono',monospace; margin-bottom:1.5rem; }
-.card   { border-radius:12px; padding:1.2rem 1.4rem; margin-bottom:.8rem; border:1px solid; }
-.c-act  { background:#0a2e1f; border-color:#00d4aa; }
-.c-prox { background:#0a1f3a; border-color:#0099ff; }
-.c-fin  { background:#2a1515; border-color:#ff4b4b; }
-.c-unk  { background:#1e1e2e; border-color:#555; }
-.clbl   { font-family:'Space Mono',monospace; font-size:.72rem; text-transform:uppercase;
-          letter-spacing:.1em; color:#6b7280; margin-bottom:.2rem; }
-.cval   { font-size:1.4rem; font-weight:700; font-family:'Space Mono',monospace; }
-.t-act  { color:#00d4aa; } .t-prox { color:#0099ff; } .t-fin { color:#ff4b4b; }
-.pill   { display:inline-block; padding:.18rem .65rem; border-radius:999px; font-size:.76rem;
-          font-weight:500; margin:.1rem; }
-.p-virt { background:#0a1f3a; color:#60b3ff; border:1px solid #0099ff44; }
-.p-pres { background:#1a2a0a; color:#8bde6a; border:1px solid #4caf5044; }
-.p-bach { background:#2a1f0a; color:#ffc46b; border:1px solid #ff990044; }
-.p-335  { background:#2a0a2a; color:#d06bff; border:1px solid #9c27b044; }
-.row-act{ background:#0a2e1f; border-left:3px solid #00d4aa; border-radius:7px;
-          padding:.6rem 1rem; margin-bottom:.4rem; display:flex;
-          justify-content:space-between; align-items:center; }
-.row-fut{ background:#0d1520; border-left:3px solid #0099ff44; border-radius:7px;
-          padding:.6rem 1rem; margin-bottom:.4rem; display:flex;
-          justify-content:space-between; align-items:center; }
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+.stApp { background: #080c14; color: #f0f0f0; }
+
+.header {
+    padding: 2.5rem 0 1.5rem 0;
+    border-bottom: 1px solid #1a2035;
+    margin-bottom: 2rem;
+}
+.header-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #f0f0f0;
+}
+.header-title span { color: #22d3a5; }
+.header-sub {
+    color: #4a5568;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
+    font-weight: 300;
+}
+
+.fecha-hoy {
+    display: inline-block;
+    background: #0d1829;
+    border: 1px solid #1a2e4a;
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
+    font-size: 0.82rem;
+    color: #4a9eff;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-top: 0.8rem;
+}
+
+/* Cards principales */
+.bloque-card {
+    background: #0d1120;
+    border: 1px solid #1a2035;
+    border-radius: 16px;
+    padding: 1.4rem 1.6rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s;
+    cursor: pointer;
+}
+.bloque-card:hover { border-color: #22d3a5; }
+.bloque-card.activo  { border-left: 4px solid #22d3a5; }
+.bloque-card.proximo { border-left: 4px solid #4a9eff; }
+.bloque-card.finalizado { border-left: 4px solid #2a3550; opacity: 0.6; }
+
+.bloque-nombre {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #f0f0f0;
+    margin-bottom: 0.6rem;
+}
+.bloque-badge {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+}
+.badge-activo     { background: #0a2e1f; color: #22d3a5; border: 1px solid #22d3a544; }
+.badge-proximo    { background: #0a1f3a; color: #4a9eff; border: 1px solid #4a9eff44; }
+.badge-finalizado { background: #1a2035; color: #4a5568; border: 1px solid #2a3550; }
+
+/* Sub-bloques */
+.sub-bloques {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin-top: 0.8rem;
+}
+.sub-card {
+    background: #0a0f1c;
+    border: 1px solid #1a2035;
+    border-radius: 10px;
+    padding: 0.9rem 1rem;
+}
+.sub-card.activo-sub   { border-color: #22d3a544; background: #071a12; }
+.sub-card.proximo-sub  { border-color: #4a9eff44; background: #071224; }
+.sub-card.done-sub     { opacity: 0.45; }
+
+.sub-titulo {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+}
+.sub-titulo.t-act  { color: #22d3a5; }
+.sub-titulo.t-prox { color: #4a9eff; }
+.sub-titulo.t-done { color: #2a3a55; }
+
+.sub-fechas {
+    font-size: 0.88rem;
+    color: #8892a4;
+}
+.sub-fechas strong { color: #c8d0dc; font-weight: 500; }
+
+.dias-restantes {
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+.dr-act  { color: #22d3a5; }
+.dr-prox { color: #4a9eff; }
+.dr-done { color: #2a3a55; }
+
+/* Selector */
+[data-testid="stSelectbox"] > div > div {
+    background: #0d1120 !important;
+    border: 1px solid #1a2035 !important;
+    border-radius: 10px !important;
+    color: #f0f0f0 !important;
+}
+label { color: #4a5568 !important; font-size: 0.82rem !important; }
+
+/* Divider */
+.divider { border: none; border-top: 1px solid #1a2035; margin: 1.5rem 0; }
+
+/* Resumen hoy */
+.hoy-box {
+    background: #071a12;
+    border: 1px solid #22d3a544;
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1.5rem;
+}
+.hoy-titulo {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #22d3a5;
+    margin-bottom: 0.8rem;
+}
+.hoy-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid #0a2e1f;
+    font-size: 0.88rem;
+}
+.hoy-item:last-child { border-bottom: none; }
+.hoy-bloque { font-family: 'Syne', sans-serif; font-weight: 700; color: #f0f0f0; }
+.hoy-sub    { color: #22d3a5; font-size: 0.8rem; }
+.hoy-fecha  { color: #4a9eff; font-size: 0.8rem; }
 </style>
 """, unsafe_allow_html=True)
 
-# ── Constantes ────────────────────────────────────────────────────────────────
-PDF_DIR = os.path.join(os.path.dirname(__file__), "pdfs")
+# ── DATOS OFICIALES DEL TABLERO ───────────────────────────────────────────────
+# Formato: { "CODIGO": { "I": (inicio, fin), "II": (inicio, fin) } }
+# Modalidades que comparten fechas: P=Presencial, T=Presencial(T), V=Virtual, 335
 
-MESES = {"enero":1,"febrero":2,"marzo":3,"abril":4,"mayo":5,"junio":6,
-          "julio":7,"agosto":8,"septiembre":9,"octubre":10,"noviembre":11,"diciembre":12}
+CALENDARIOS = {
+    # 25P05 / 25T05 / 25V05
+    "25P05": {"label": "25P05 · T05 · V05", "modalidades": ["Presencial","Virtual","335"],
+              "I":  (date(2025,9,29), date(2025,11,22)),
+              "II": (date(2025,11,24), date(2026,1,18))},
+    "25T05": {"label": "25T05", "alias": "25P05", "modalidades": ["Bachilleresitario"],
+              "I":  (date(2025,9,29), date(2025,11,22)),
+              "II": (date(2025,11,24), date(2026,1,18))},
+    "25V05": {"label": "25V05", "alias": "25P05", "modalidades": ["Virtual"],
+              "I":  (date(2025,9,29), date(2025,11,22)),
+              "II": (date(2025,11,24), date(2026,1,18))},
 
-MODALIDAD_MAP = {"BACHILLER":"Bachilleresitario","PRESENCIAL":"Presencial",
-                 "335":"Modalidad 335","VIRTUAL":"Virtual"}
+    # 25P06 / 25T06 / 25V06
+    "25P06": {"label": "25P06 · T06 · V06", "modalidades": ["Presencial","Virtual","335"],
+              "I":  (date(2025,11,24), date(2026,1,18)),
+              "II": (date(2026,2,2),   date(2026,3,29))},
+    "25T06": {"label": "25T06", "alias": "25P06", "modalidades": ["Bachilleresitario"],
+              "I":  (date(2025,11,24), date(2026,1,18)),
+              "II": (date(2026,2,2),   date(2026,3,29))},
+    "25V06": {"label": "25V06", "alias": "25P06", "modalidades": ["Virtual"],
+              "I":  (date(2025,11,24), date(2026,1,18)),
+              "II": (date(2026,2,2),   date(2026,3,29))},
 
-PAT_ES  = re.compile(r'(?:lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo),\s+(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})', re.I)
-PAT_ANG = re.compile(r'(?:lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo),\s+(\w+)\s+(\d{1,2}),?\s+(\d{4})', re.I)
-PAT_ANY = re.compile(r'(?:lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo),\s+\d{1,2}\s+(?:de\s+)?\w+(?:\s+de\s+|\s+)\d{4}', re.I)
-PAT_BLQ = [re.compile(r'^(2[56])(T|V|P)(0[1-9]|[1-9]\d)$', re.I),
-            re.compile(r'^20(2[56])[A-D]$', re.I)]
+    # 2026A (Presencial anual)
+    "2026A": {"label": "2026A", "modalidades": ["Presencial"],
+              "I":  None,
+              "II": (date(2026,2,2), date(2026,5,24))},
 
-# ── Funciones de extracción ───────────────────────────────────────────────────
-def parsear_fecha(txt):
-    m = PAT_ES.search(txt or "")
-    if m:
-        mes = MESES.get(m.group(2).lower())
-        if mes:
-            try: return date(int(m.group(3)), mes, int(m.group(1)))
-            except: pass
-    m = PAT_ANG.search(txt or "")
-    if m:
-        mes = MESES.get(m.group(1).lower())
-        if mes:
-            try: return date(int(m.group(3)), mes, int(m.group(2)))
-            except: pass
-    return None
+    # 26V01
+    "26V01": {"label": "26V01", "modalidades": ["Virtual","335"],
+              "I":  (date(2026,2,2),  date(2026,3,29)),
+              "II": (date(2026,3,30), date(2026,5,24))},
 
-def es_bloque(txt):
-    t = txt.strip().upper().replace(" ","")
-    return any(p.match(t) for p in PAT_BLQ)
+    # 26P01 / 26T01
+    "26P01": {"label": "26P01 · T01", "modalidades": ["Presencial","Bachilleresitario"],
+              "I":  (date(2026,2,2),  date(2026,3,29)),
+              "II": (date(2026,3,30), date(2026,5,24))},
 
-def detectar_bloque(texto):
-    for linea in [l.strip() for l in texto.split("\n") if l.strip()][:15]:
-        norm = "".join(c for i,c in enumerate(linea) if i==0 or c!=linea[i-1])
-        if es_bloque(norm.strip().upper().replace(" ","")):
-            return norm.strip().upper().replace(" ","")
-    return None
+    # 26V02
+    "26V02": {"label": "26V02", "modalidades": ["Virtual","335"],
+              "I":  (date(2026,3,30), date(2026,5,24)),
+              "II": (date(2026,5,25), date(2026,7,19))},
 
-def detectar_modalidad(texto, nombre):
-    src = (texto+" "+nombre).upper()
-    for k,v in MODALIDAD_MAP.items():
-        if k in src: return v
-    return "Virtual"
+    # 26P02 / 26T02
+    "26P02": {"label": "26P02 · T02", "modalidades": ["Presencial","Bachilleresitario"],
+              "I":  (date(2026,3,30), date(2026,5,24)),
+              "II": (date(2026,5,25), date(2026,7,19))},
 
-def limpiar(txt):
-    for p in [r'Proceso de Ingreso.*',r'Fechas de Pago.*',r'Novedades de.*',
-              r'Procesos Acad[eé]micos.*',r'Estudiantes Nuevos.*']:
-        txt = re.sub(p,'',txt,flags=re.I).strip()
-    return txt.strip()
+    # 26V03
+    "26V03": {"label": "26V03", "modalidades": ["Virtual","335"],
+              "I":  (date(2026,5,25), date(2026,7,19)),
+              "II": (date(2026,8,3),  date(2026,9,27))},
 
-def extraer(texto):
-    acts = []
-    for linea in texto.split("\n"):
-        linea = linea.strip()
-        fechas = PAT_ANY.findall(linea)
-        if len(fechas)>=2:
-            nombre = limpiar(linea[:linea.index(fechas[0])])
-            if len(nombre)>=4: acts.append({"actividad":nombre,"ini":fechas[0],"fin":fechas[1]})
-        elif len(fechas)==1:
-            nombre = limpiar(linea[:linea.index(fechas[0])])
-            if len(nombre)>=4: acts.append({"actividad":nombre,"ini":fechas[0],"fin":fechas[0]})
-    return acts
+    # 26P03 / 26T03
+    "26P03": {"label": "26P03 · T03", "modalidades": ["Presencial","Bachilleresitario"],
+              "I":  (date(2026,5,25), date(2026,7,19)),
+              "II": (date(2026,8,3),  date(2026,9,27))},
 
-def leer_pdf(ruta):
-    registros = []
-    nombre = os.path.basename(ruta)
-    try:
-        with pdfplumber.open(ruta) as pdf:
-            for pag in pdf.pages:
-                texto = pag.extract_text() or ""
-                if not texto.strip(): continue
-                bloque = detectar_bloque(texto)
-                if not bloque: continue
-                modalidad = detectar_modalidad(texto, nombre)
-                for a in extraer(texto):
-                    ini = parsear_fecha(a["ini"])
-                    fin = parsear_fecha(a["fin"])
-                    if ini is None and fin is None: continue
-                    registros.append({"bloque":bloque,"modalidad":modalidad,
-                                      "actividad":a["actividad"],"inicio":ini,"fin":fin})
-    except Exception as e:
-        st.warning(f"⚠ Error en {nombre}: {e}")
-    return registros
+    # 26V04
+    "26V04": {"label": "26V04", "modalidades": ["Virtual","335"],
+              "I":  (date(2026,8,3),  date(2026,9,27)),
+              "II": (date(2026,9,28), date(2026,11,22))},
 
-# ── Carga de datos (cacheada) ─────────────────────────────────────────────────
-@st.cache_data(show_spinner="📂 Leyendo calendarios…")
-def cargar_datos():
-    archivos = [f for f in os.listdir(PDF_DIR) if f.lower().endswith(".pdf")]
-    todos = []
-    for f in archivos:
-        todos.extend(leer_pdf(os.path.join(PDF_DIR, f)))
-    if not todos:
-        return pd.DataFrame(columns=["bloque","modalidad","actividad","inicio","fin"])
-    df = pd.DataFrame(todos).drop_duplicates(
-        subset=["bloque","modalidad","actividad","inicio","fin"]).reset_index(drop=True)
-    return df
+    # 26P04 / 26T04
+    "26P04": {"label": "26P04 · T04", "modalidades": ["Presencial","Bachilleresitario"],
+              "I":  (date(2026,8,3),  date(2026,9,27)),
+              "II": (date(2026,9,28), date(2026,11,22))},
+}
 
-# ── Análisis ──────────────────────────────────────────────────────────────────
-def estado_bloque(df_b):
-    hoy = date.today()
-    per = df_b[df_b["actividad"].str.contains("Periodo.Acad",case=False,na=False,regex=True)]
-    src = per if not per.empty else df_b
-    ini, fin = src["inicio"].dropna().min(), src["fin"].dropna().max()
-    if pd.isna(ini) or pd.isna(fin): return "DESCONOCIDO"
-    if hoy < ini:  return "PRÓXIMO"
-    if hoy > fin:  return "FINALIZADO"
-    return "ACTIVO"
-
+# ── LÓGICA ────────────────────────────────────────────────────────────────────
 def fmt(d):
-    if d is None or (isinstance(d,float) and pd.isna(d)): return "—"
-    return d.strftime("%d/%m/%Y") if isinstance(d,date) else str(d)
+    return d.strftime("%d/%m/%Y") if d else "—"
 
-def pill(m):
-    cls = {"Virtual":"p-virt","Presencial":"p-pres","Bachilleresitario":"p-bach","Modalidad 335":"p-335"}.get(m,"")
-    return f'<span class="pill {cls}">{m}</span>'
+def estado_sub(ini, fin):
+    hoy = date.today()
+    if ini is None or fin is None:
+        return "desconocido"
+    if hoy < ini:
+        return "proximo"
+    if hoy > fin:
+        return "finalizado"
+    return "activo"
 
-# ── Cargar datos ──────────────────────────────────────────────────────────────
-df = cargar_datos()
+def dias_info(ini, fin):
+    hoy = date.today()
+    if ini is None or fin is None:
+        return "", ""
+    if hoy < ini:
+        dias = (ini - hoy).days
+        return "proximo", f"Inicia en {dias} día{'s' if dias!=1 else ''}"
+    if hoy > fin:
+        return "finalizado", "Finalizado"
+    dias = (fin - hoy).days
+    return "activo", f"Faltan {dias} día{'s' if dias!=1 else ''}"
+
+def estado_bloque(data):
+    hoy = date.today()
+    estados = []
+    for sub in ["I", "II"]:
+        rng = data.get(sub)
+        if rng:
+            estados.append(estado_sub(rng[0], rng[1]))
+    if "activo" in estados:
+        return "activo"
+    if "proximo" in estados:
+        return "proximo"
+    return "finalizado"
+
+# ── HEADER ────────────────────────────────────────────────────────────────────
 hoy = date.today()
+st.markdown(f"""
+<div class="header">
+    <div class="header-title">Calendarios Académicos <span>CUN</span></div>
+    <div class="header-sub">Corporación Unificada Nacional de Educación Superior</div>
+    <div class="fecha-hoy">📅 HOY: {hoy.strftime("%d/%m/%Y")}</div>
+</div>
+""", unsafe_allow_html=True)
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
-with st.sidebar:
-    st.markdown("""
-    <div class="titulo" style="font-size:1.2rem;">📅 CUN Calendarios</div>
-    <div class="sub" style="font-size:.75rem;">Corporación Unificada Nacional</div>
-    """, unsafe_allow_html=True)
+# ── RESUMEN ACTIVOS HOY ───────────────────────────────────────────────────────
+activos_hoy = []
+for codigo, data in CALENDARIOS.items():
+    if data.get("alias"):
+        continue
+    for sub in ["I", "II"]:
+        rng = data.get(sub)
+        if rng and rng[0] <= hoy <= rng[1]:
+            activos_hoy.append((data["label"], f"Bloque {sub}", rng[1]))
 
-    if not df.empty:
-        bloques = sorted(df["bloque"].unique())
-        activos  = sum(1 for b in bloques if estado_bloque(df[df["bloque"]==b])=="ACTIVO")
-        proximos = sum(1 for b in bloques if estado_bloque(df[df["bloque"]==b])=="PRÓXIMO")
+if activos_hoy:
+    items_html = ""
+    for lbl, sub, fin_r in activos_hoy:
+        items_html += f"""
+        <div class="hoy-item">
+            <span class="hoy-bloque">{lbl} <span class="hoy-sub">— {sub}</span></span>
+            <span class="hoy-fecha">hasta {fmt(fin_r)}</span>
+        </div>"""
+    st.markdown(f"""
+    <div class="hoy-box">
+        <div class="hoy-titulo">🟢 En curso hoy</div>
+        {items_html}
+    </div>""", unsafe_allow_html=True)
 
-        st.markdown("#### 📊 Resumen")
-        c1,c2 = st.columns(2)
-        c1.metric("Bloques",   len(bloques))
-        c2.metric("🟢 Activos",  activos)
-        c1.metric("🔵 Próximos", proximos)
-        c2.metric("Registros", len(df))
-        st.markdown(f"<div style='color:#555;font-size:.75rem;margin-top:.5rem'>Hoy: {hoy.strftime('%d/%m/%Y')}</div>",
-                    unsafe_allow_html=True)
-
-# ── Header ────────────────────────────────────────────────────────────────────
-st.markdown('<div class="titulo">Calendarios Académicos CUN</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub">Consulta el estado de cualquier bloque académico en tiempo real</div>',
-            unsafe_allow_html=True)
-
-if df.empty:
-    st.error("No se encontraron PDFs en la carpeta /pdfs. Verifica que los archivos estén incluidos.")
-    st.stop()
-
-# ── Tabs ──────────────────────────────────────────────────────────────────────
-tab1, tab2, tab3 = st.tabs(["🔍 Buscar bloque", "📋 Todos los bloques", "📅 Activos hoy"])
+# ── TABS ──────────────────────────────────────────────────────────────────────
+tab1, tab2 = st.tabs(["🔍 Buscar bloque", "📋 Todos los bloques"])
 
 # ══ TAB 1 ════════════════════════════════════════════════════════════════════
 with tab1:
-    bloques_list = sorted(df["bloque"].unique())
-    ca, cb = st.columns([2,2])
-    with ca:
-        sel = st.selectbox("Selecciona un bloque", [""]+bloques_list,
-                           format_func=lambda x: "— elige un bloque —" if x=="" else x)
-    with cb:
-        mods_all = ["Todas"] + sorted(df["modalidad"].unique())
-        mod_f = st.selectbox("Modalidad", mods_all)
+    codigos_principales = [c for c, d in CALENDARIOS.items() if not d.get("alias")]
+    opciones = {d["label"]: c for c, d in CALENDARIOS.items() if not d.get("alias")}
 
-    if not sel:
-        st.info("👆 Selecciona un bloque para ver su información")
+    sel_label = st.selectbox(
+        "Selecciona un bloque",
+        ["— elige un bloque —"] + list(opciones.keys())
+    )
+
+    if sel_label == "— elige un bloque —":
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.info("👆 Selecciona un bloque para ver sus fechas")
         st.stop()
 
-    df_b = df[df["bloque"]==sel].copy()
-    if mod_f != "Todas":
-        df_b = df_b[df_b["modalidad"]==mod_f]
-    if df_b.empty:
-        st.warning(f"No hay datos para {sel} con esa modalidad.")
-        st.stop()
+    codigo = opciones[sel_label]
+    data = CALENDARIOS[codigo]
+    est_gral = estado_bloque(data)
 
-    est = estado_bloque(df_b)
-    mods = sorted(df_b["modalidad"].unique())
-    info = {"ACTIVO":("🟢","c-act","t-act"),"PRÓXIMO":("🔵","c-prox","t-prox"),
-            "FINALIZADO":("🔴","c-fin","t-fin"),"DESCONOCIDO":("⚪","c-unk","")}.get(est,("⚪","c-unk",""))
+    badge_cls = {"activo": "badge-activo", "proximo": "badge-proximo", "finalizado": "badge-finalizado"}
+    badge_txt = {"activo": "🟢 ACTIVO", "proximo": "🔵 PRÓXIMO", "finalizado": "⬛ FINALIZADO"}
 
-    c1,c2,c3,c4 = st.columns(4)
-    with c1:
-        st.markdown(f'<div class="card {info[1]}"><div class="clbl">Estado</div>'
-                    f'<div class="cval {info[2]}">{info[0]} {est}</div></div>',
-                    unsafe_allow_html=True)
-    with c2:
-        st.markdown(f'<div class="card c-unk"><div class="clbl">Inicio bloque</div>'
-                    f'<div class="cval" style="font-size:1rem;color:#e8e8e8">'
-                    f'{fmt(df_b["inicio"].dropna().min())}</div></div>', unsafe_allow_html=True)
-    with c3:
-        st.markdown(f'<div class="card c-unk"><div class="clbl">Fin bloque</div>'
-                    f'<div class="cval" style="font-size:1rem;color:#e8e8e8">'
-                    f'{fmt(df_b["fin"].dropna().max())}</div></div>', unsafe_allow_html=True)
-    with c4:
-        pills_html = " ".join(pill(m) for m in mods)
-        st.markdown(f'<div class="card c-unk"><div class="clbl">Modalidades</div>'
-                    f'<div style="margin-top:.5rem">{pills_html}</div></div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style="margin: 1.2rem 0 1rem 0;">
+        <span style="font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800; color:#f0f0f0">
+            {data['label']}
+        </span>
+        <span class="bloque-badge {badge_cls[est_gral]}">{badge_txt[est_gral]}</span>
+    </div>
+    <div style="color:#4a5568; font-size:0.83rem; margin-bottom:1.2rem;">
+        {' · '.join(data['modalidades'])}
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown("---")
+    # Sub-bloques
+    cols = st.columns(2)
+    for i, (sub_key, sub_label) in enumerate([("I", "Bloque I"), ("II", "Bloque II")]):
+        rng = data.get(sub_key)
+        with cols[i]:
+            if rng is None:
+                st.markdown(f"""
+                <div class="sub-card done-sub">
+                    <div class="sub-titulo t-done">{sub_label}</div>
+                    <div class="sub-fechas">No aplica</div>
+                </div>""", unsafe_allow_html=True)
+            else:
+                est = estado_sub(rng[0], rng[1])
+                _, dr_txt = dias_info(rng[0], rng[1])
+                css_card  = {"activo":"activo-sub","proximo":"proximo-sub","finalizado":"done-sub"}.get(est,"")
+                css_titulo = {"activo":"t-act","proximo":"t-prox","finalizado":"t-done"}.get(est,"")
+                css_dr    = {"activo":"dr-act","proximo":"dr-prox","finalizado":"dr-done"}.get(est,"")
 
-    # Vigentes hoy
-    vigentes = df_b[(df_b["inicio"]<=hoy)&(df_b["fin"]>=hoy)].sort_values("inicio")
-    if not vigentes.empty:
-        st.markdown("#### 🟢 En curso hoy")
-        for _,row in vigentes.iterrows():
-            st.markdown(f'<div class="row-act"><span style="color:#e8e8e8;font-weight:500">'
-                        f'{row["actividad"]}</span>'
-                        f'<span style="color:#00d4aa;font-family:Space Mono,monospace;font-size:.82rem">'
-                        f'{fmt(row["inicio"])} → {fmt(row["fin"])}</span></div>',
-                        unsafe_allow_html=True)
-        st.markdown("")
-
-    # Tabla completa
-    st.markdown("#### 📋 Todas las actividades")
-    busq = st.text_input("🔎 Buscar actividad", placeholder="ej: matrícula, parcial…")
-
-    filas = []
-    for _,row in df_b.sort_values("inicio").iterrows():
-        ini_r, fin_r = row["inicio"], row["fin"]
-        if pd.notna(ini_r) and pd.notna(fin_r):
-            if ini_r<=hoy<=fin_r: e2="🟢 Hoy"
-            elif ini_r>hoy:       e2="⏳ Próxima"
-            else:                 e2="✅ Finalizada"
-        else: e2="—"
-        filas.append({"Actividad":row["actividad"],"Modalidad":row["modalidad"],
-                      "Inicio":fmt(ini_r),"Fin":fmt(fin_r),"Estado":e2})
-
-    df_show = pd.DataFrame(filas)
-    if busq:
-        df_show = df_show[df_show["Actividad"].str.contains(busq,case=False,na=False)]
-
-    st.dataframe(df_show, use_container_width=True, hide_index=True,
-                 height=min(420, 55+len(df_show)*36))
+                st.markdown(f"""
+                <div class="sub-card {css_card}">
+                    <div class="sub-titulo {css_titulo}">{sub_label}</div>
+                    <div class="sub-fechas">
+                        <strong>{fmt(rng[0])}</strong>
+                        <span style="color:#2a3a55"> → </span>
+                        <strong>{fmt(rng[1])}</strong>
+                    </div>
+                    <div class="dias-restantes {css_dr}">{dr_txt}</div>
+                </div>""", unsafe_allow_html=True)
 
 # ══ TAB 2 ════════════════════════════════════════════════════════════════════
 with tab2:
-    st.markdown("#### 📋 Todos los bloques")
-    fa, fb = st.columns(2)
-    with fa:
-        f_est = st.multiselect("Estado", ["ACTIVO","PRÓXIMO","FINALIZADO"],
-                               default=["ACTIVO","PRÓXIMO"])
-    with fb:
-        f_mod = st.multiselect("Modalidad", sorted(df["modalidad"].unique()))
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    filas2 = []
-    for b in sorted(df["bloque"].unique()):
-        db = df[df["bloque"]==b]
-        e  = estado_bloque(db)
-        if f_est and e not in f_est: continue
-        ms = sorted(db["modalidad"].unique())
-        if f_mod and not any(m in f_mod for m in ms): continue
-        fut = db[db["fin"]>=hoy].sort_values("inicio")
-        prox = fut.iloc[0]["actividad"][:40] if not fut.empty else "—"
-        em = {"ACTIVO":"🟢","PRÓXIMO":"🔵","FINALIZADO":"🔴"}.get(e,"⚪")
-        filas2.append({"Bloque":b,"Estado":f"{em} {e}","Modalidades":", ".join(ms),
-                       "Inicio":fmt(db["inicio"].dropna().min()),
-                       "Fin":fmt(db["fin"].dropna().max()),
-                       "Próxima actividad":prox,"Actividades":len(db)})
+    # Filtro
+    filtro = st.multiselect(
+        "Filtrar por estado",
+        ["🟢 Activo", "🔵 Próximo", "⬛ Finalizado"],
+        default=["🟢 Activo", "🔵 Próximo"]
+    )
+    mapa_filtro = {"🟢 Activo": "activo", "🔵 Próximo": "proximo", "⬛ Finalizado": "finalizado"}
+    estados_sel = [mapa_filtro[f] for f in filtro]
 
-    if filas2:
-        st.dataframe(pd.DataFrame(filas2), use_container_width=True, hide_index=True,
-                     height=min(600, 55+len(filas2)*38))
-    else:
-        st.info("No hay bloques con esos filtros.")
+    for codigo, data in CALENDARIOS.items():
+        if data.get("alias"):
+            continue
+        est_gral = estado_bloque(data)
+        if estados_sel and est_gral not in estados_sel:
+            continue
 
-# ══ TAB 3 ════════════════════════════════════════════════════════════════════
-with tab3:
-    st.markdown(f"#### 📅 En curso hoy — {hoy.strftime('%d/%m/%Y')}")
-    df_hoy = df[(df["inicio"]<=hoy)&(df["fin"]>=hoy)].sort_values(["bloque","inicio"])
+        badge_cls2 = {"activo": "badge-activo", "proximo": "badge-proximo", "finalizado": "badge-finalizado"}
+        badge_txt2 = {"activo": "🟢 ACTIVO", "proximo": "🔵 PRÓXIMO", "finalizado": "⬛ FIN"}
+        card_cls   = {"activo": "activo", "proximo": "proximo", "finalizado": "finalizado"}
 
-    if df_hoy.empty:
-        st.info("No hay actividades en curso hoy.")
-    else:
-        for b in sorted(df_hoy["bloque"].unique()):
-            dbh = df_hoy[df_hoy["bloque"]==b]
-            ms  = ", ".join(sorted(dbh["modalidad"].unique()))
-            with st.expander(f"**{b}** — {ms} ({len(dbh)} actividad{'es' if len(dbh)>1 else ''})", expanded=True):
-                for _,row in dbh.iterrows():
-                    st.markdown(f'<div class="row-fut">'
-                                f'<span style="color:#e0e0e0">{row["actividad"]}</span>'
-                                f'<span style="color:#60b3ff;font-size:.82rem;font-family:Space Mono,monospace">'
-                                f'hasta {fmt(row["fin"])}</span></div>', unsafe_allow_html=True)
+        sub_html = ""
+        for sub_key, sub_label in [("I","Bloque I"),("II","Bloque II")]:
+            rng = data.get(sub_key)
+            if rng is None:
+                continue
+            est2 = estado_sub(rng[0], rng[1])
+            _, dr = dias_info(rng[0], rng[1])
+            color = {"activo":"#22d3a5","proximo":"#4a9eff","finalizado":"#2a3a55"}.get(est2,"#2a3a55")
+            sub_html += f"""
+            <span style="display:inline-block; margin-right:1.5rem; font-size:0.82rem;">
+                <span style="color:#4a5568; font-weight:600; text-transform:uppercase;
+                             font-size:0.7rem; letter-spacing:.08em;">{sub_label} </span>
+                <span style="color:#c8d0dc">{fmt(rng[0])} → {fmt(rng[1])}</span>
+                <span style="color:{color}; font-size:0.75rem; margin-left:.4rem">· {dr}</span>
+            </span>"""
+
+        st.markdown(f"""
+        <div class="bloque-card {card_cls[est_gral]}">
+            <div class="bloque-nombre">
+                {data['label']}
+                <span class="bloque-badge {badge_cls2[est_gral]}">{badge_txt2[est_gral]}</span>
+            </div>
+            <div style="color:#4a5568; font-size:0.78rem; margin-bottom:.6rem">
+                {' · '.join(data['modalidades'])}
+            </div>
+            <div>{sub_html}</div>
+        </div>""", unsafe_allow_html=True)
+
