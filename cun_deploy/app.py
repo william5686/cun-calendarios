@@ -312,18 +312,14 @@ for codigo, data in CALENDARIOS.items():
             activos_hoy.append((data["label"], f"Bloque {sub}", rng[1]))
 
 if activos_hoy:
-    items_html = ""
+    st.markdown('<div class="hoy-box"><div class="hoy-titulo">🟢 En curso hoy</div>', unsafe_allow_html=True)
     for lbl, sub, fin_r in activos_hoy:
-        items_html += f"""
+        st.markdown(f"""
         <div class="hoy-item">
             <span class="hoy-bloque">{lbl} <span class="hoy-sub">— {sub}</span></span>
             <span class="hoy-fecha">hasta {fmt(fin_r)}</span>
-        </div>"""
-    st.markdown(f"""
-    <div class="hoy-box">
-        <div class="hoy-titulo">🟢 En curso hoy</div>
-        {items_html}
-    </div>""", unsafe_allow_html=True)
+        </div>""", unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ── TABS ──────────────────────────────────────────────────────────────────────
 tab1, tab2 = st.tabs(["🔍 Buscar bloque", "📋 Todos los bloques"])
@@ -442,4 +438,3 @@ with tab2:
             </div>
             <div>{sub_html}</div>
         </div>""", unsafe_allow_html=True)
-
