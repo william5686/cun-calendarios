@@ -209,7 +209,7 @@ CALENDARIOS = {
     # 2026A (Presencial anual)
     "2026A": {"label": "2026A", "modalidades": ["Presencial"],
               
-              "Fecha": (date(2026,2,2), date(2026,5,24))},
+              "I": (date(2026,2,2), date(2026,5,24))},
 
     # 26V01
     "26V01": {"label": "26V01", "modalidades": ["Virtual","335"],
