@@ -148,6 +148,34 @@ label { color: #4a5568 !important; font-size: 0.82rem !important; }
 /* Divider */
 .divider { border: none; border-top: 1px solid #1a2035; margin: 1.5rem 0; }
 
+/* Tabla de actividades */
+.act-section { margin-top: 1.8rem; border: 1px solid #1a2035; border-radius: 14px; overflow: hidden; }
+.act-header { background: #0d1829; padding: 0.9rem 1.2rem; font-family: 'Syne', sans-serif;
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
+    color: #4a9eff; border-bottom: 1px solid #1a2035; }
+.corte-label { background: #0a1829; padding: 0.6rem 1.2rem; font-family: 'Syne', sans-serif;
+    font-size: 0.78rem; font-weight: 700; color: #4a9eff; text-transform: uppercase;
+    letter-spacing: 0.08em; border-bottom: 1px solid #1a2035;
+    display: flex; justify-content: space-between; align-items: center; }
+.corte-pct { background: #0d2a4a; color: #4a9eff; padding: 0.15rem 0.6rem;
+    border-radius: 999px; font-size: 0.72rem; }
+.act-row { display: grid; grid-template-columns: 50px 95px 95px 1fr 55px;
+    gap: 0.5rem; padding: 0.65rem 1.2rem; border-bottom: 1px solid #0f1520;
+    font-size: 0.83rem; align-items: center; }
+.act-row:last-child { border-bottom: none; }
+.act-row.vigente { background: #071a12; }
+.act-row.proxima { background: #07121f; }
+.act-row.done    { opacity: 0.45; }
+.act-semana { color: #4a5568; font-weight: 600; text-align: center; }
+.act-fecha  { color: #8892a4; font-size: 0.78rem; }
+.act-nombre strong { color: #f0f0f0; display: block; }
+.act-nombre span   { color: #6b7280; font-size: 0.78rem; }
+.act-pct    { color: #22d3a5; font-weight: 600; font-size: 0.8rem; text-align: center; }
+.col-headers { display: grid; grid-template-columns: 50px 95px 95px 1fr 55px;
+    gap: 0.5rem; padding: 0.5rem 1.2rem; border-bottom: 1px solid #1a2035;
+    font-size: 0.7rem; color: #2a3a55; text-transform: uppercase;
+    letter-spacing: 0.08em; font-weight: 600; }
+
 /* Resumen hoy */
 .hoy-box {
     background: #071a12;
@@ -208,8 +236,8 @@ CALENDARIOS = {
 
     # 2026A (Presencial anual)
     "2026A": {"label": "2026A", "modalidades": ["Presencial"],
-              
-              "I": (date(2026,2,2), date(2026,5,24))},
+              "I":  None,
+              "II": (date(2026,2,2), date(2026,5,24))},
 
     # 26V01
     "26V01": {"label": "26V01", "modalidades": ["Virtual","335"],
@@ -246,7 +274,61 @@ CALENDARIOS = {
               "I":  (date(2026,8,3),  date(2026,9,27)),
               "II": (date(2026,9,28), date(2026,11,22))},
 
-   
+    # 26P04 / 26T04
+    "26P04": {"label": "26P04 · T04", "modalidades": ["Presencial","Bachilleresitario"],
+              "I":  (date(2026,8,3),  date(2026,9,27)),
+              "II": (date(2026,9,28), date(2026,11,22))},
+}
+
+# ── ACTIVIDADES POR BLOQUE ────────────────────────────────────────────────────
+# clave = codigo del bloque + "_" + sub ("I" o "II")
+# Aplica a: 25P06/25T06/25V06 Bloque II  Y  26V01/26P01/26T01 Bloque I
+# (mismas fechas para ambos según el calendario oficial)
+
+ACTIVIDADES = {
+    # 25P06·T06·V06 Bloque II  ==  26V01·P01·T01 Bloque I  (mismas fechas)
+    "BLOQUE_VIRTUAL_B2_V1_B1": [
+        # Primer Corte (30%)
+        {"corte": "Primer Corte", "pct_corte": "30%", "semana": 1,
+         "ini": date(2026,2,2),  "fin": date(2026,2,8),
+         "nombre": "Introducción – Sesión de clase", "sub": "", "pct_act": ""},
+        {"corte": "Primer Corte", "pct_corte": "30%", "semana": 2,
+         "ini": date(2026,2,9),  "fin": date(2026,2,15),
+         "nombre": "Quiz 1", "sub": "Sesión de Clase", "pct_act": "10%"},
+        {"corte": "Primer Corte", "pct_corte": "30%", "semana": 3,
+         "ini": date(2026,2,16), "fin": date(2026,2,22),
+         "nombre": "Parcial 1", "sub": "Sesión de Clase", "pct_act": "20%"},
+        # Segundo Corte (30%)
+        {"corte": "Segundo Corte", "pct_corte": "30%", "semana": 4,
+         "ini": date(2026,2,23), "fin": date(2026,3,1),
+         "nombre": "Quiz 2", "sub": "Sesión de Clase", "pct_act": "10%"},
+        {"corte": "Segundo Corte", "pct_corte": "30%", "semana": 5,
+         "ini": date(2026,3,2),  "fin": date(2026,3,8),
+         "nombre": "Parcial 2", "sub": "Sesión de Clase", "pct_act": "20%"},
+        # Tercer Corte (40%)
+        {"corte": "Tercer Corte", "pct_corte": "40%", "semana": 6,
+         "ini": date(2026,3,9),  "fin": date(2026,3,15),
+         "nombre": "ACA – Pitch (Disciplinares–NIP)", "sub": "Sesión de Clase", "pct_act": "34%"},
+        {"corte": "Tercer Corte", "pct_corte": "40%", "semana": 7,
+         "ini": date(2026,3,16), "fin": date(2026,3,22),
+         "nombre": "Quiz 3", "sub": "Sesión de Clase", "pct_act": "2%"},
+        {"corte": "Tercer Corte", "pct_corte": "40%", "semana": 7,
+         "ini": date(2026,3,16), "fin": date(2026,3,22),
+         "nombre": "Coevaluación", "sub": "", "pct_act": "2%"},
+        {"corte": "Tercer Corte", "pct_corte": "40%", "semana": 7,
+         "ini": date(2026,3,16), "fin": date(2026,3,22),
+         "nombre": "Autoevaluación", "sub": "", "pct_act": "2%"},
+        {"corte": "Tercer Corte", "pct_corte": "40%", "semana": 8,
+         "ini": date(2026,3,23), "fin": date(2026,3,29),
+         "nombre": "Cierre de Notas", "sub": "", "pct_act": ""},
+    ],
+}
+
+# Mapeo: qué clave de actividades usar para cada bloque+sub
+ACTIVIDADES_MAP = {
+    "25P06_II": "BLOQUE_VIRTUAL_B2_V1_B1",
+    "26V01_I":  "BLOQUE_VIRTUAL_B2_V1_B1",
+    "26P01_I":  "BLOQUE_VIRTUAL_B2_V1_B1",
 }
 
 # ── LÓGICA ────────────────────────────────────────────────────────────────────
@@ -287,6 +369,42 @@ def estado_bloque(data):
     if "proximo" in estados:
         return "proximo"
     return "finalizado"
+
+def mostrar_actividades(actos):
+    hoy = date.today()
+    st.markdown('<div class="act-section">', unsafe_allow_html=True)
+    st.markdown('<div class="act-header">📋 Calendario de Actividades</div>', unsafe_allow_html=True)
+    st.markdown('<div class="col-headers"><span>Sem.</span><span>Inicio</span><span>Fin</span><span>Actividad</span><span>%</span></div>', unsafe_allow_html=True)
+
+    corte_actual = None
+    for a in actos:
+        # Encabezado de corte
+        if a["corte"] != corte_actual:
+            corte_actual = a["corte"]
+            st.markdown(f'<div class="corte-label"><span>{corte_actual}</span><span class="corte-pct">{a["pct_corte"]}</span></div>', unsafe_allow_html=True)
+
+        # Estado de la fila
+        if a["ini"] <= hoy <= a["fin"]:
+            css_row = "vigente"
+            dot = '<span class="act-estado-dot dot-act"></span>'
+        elif a["ini"] > hoy:
+            css_row = "proxima"
+            dot = '<span class="act-estado-dot dot-prox"></span>'
+        else:
+            css_row = "done"
+            dot = '<span class="act-estado-dot dot-done"></span>'
+
+        sub_txt = f'<span>{a["sub"]}</span>' if a["sub"] else ""
+        st.markdown(f"""
+        <div class="act-row {css_row}">
+            <div class="act-semana">{dot}{a['semana']}</div>
+            <div class="act-fecha">{a['ini'].strftime('%d/%m/%Y')}</div>
+            <div class="act-fecha">{a['fin'].strftime('%d/%m/%Y')}</div>
+            <div class="act-nombre"><strong>{a['nombre']}</strong>{sub_txt}</div>
+            <div class="act-pct">{a['pct_act']}</div>
+        </div>""", unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ── HEADER ────────────────────────────────────────────────────────────────────
 hoy = date.today()
@@ -383,6 +501,18 @@ with tab1:
                     </div>
                     <div class="dias-restantes {css_dr}">{dr_txt}</div>
                 </div>""", unsafe_allow_html=True)
+
+    # ── Tabla de actividades si existe para este bloque/sub ───────────────────
+    for sub_key in ["I", "II"]:
+        clave = f"{codigo}_{sub_key}"
+        if clave in ACTIVIDADES_MAP:
+            rng = data.get(sub_key)
+            if rng:
+                est_sub = estado_sub(rng[0], rng[1])
+                if est_sub in ("activo", "proximo"):
+                    actos = ACTIVIDADES[ACTIVIDADES_MAP[clave]]
+                    st.markdown(f"<div style='margin-top:.5rem; color:#4a5568; font-size:.78rem;'>Bloque {sub_key}: {fmt(rng[0])} → {fmt(rng[1])}</div>", unsafe_allow_html=True)
+                    mostrar_actividades(actos)
 
 # ══ TAB 2 ════════════════════════════════════════════════════════════════════
 with tab2:
