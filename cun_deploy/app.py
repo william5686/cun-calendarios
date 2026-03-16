@@ -495,7 +495,7 @@ with tab1:
                     <div class="sub-titulo {css_titulo}">{sub_label}</div>
                     <div class="sub-fechas">
                         <strong>{fmt(rng[0])}</strong>
-                        <span style="color:#f5f5dc"> → </span>
+                        <span style="color:#2a3a55"> → </span>
                         <strong>{fmt(rng[1])}</strong>
                     </div>
                     <div class="dias-restantes {css_dr}">{dr_txt}</div>
