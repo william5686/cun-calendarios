@@ -19,7 +19,7 @@ st.markdown("""
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-.stApp { background: #080c14; color: #f0f0f0; }
+.stApp { background: #ffffff; color: #0f1117; }
 
 .header {
     padding: 2.5rem 0 1.5rem 0;
@@ -31,7 +31,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     font-size: 2.4rem;
     font-weight: 800;
     letter-spacing: -0.02em;
-    color: #f0f0f0;
+    color: #0f1117;
 }
 .header-title span { color: #22d3a5; }
 .header-sub {
