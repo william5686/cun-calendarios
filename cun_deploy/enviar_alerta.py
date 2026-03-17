@@ -40,6 +40,11 @@ def dias_restantes():
 
 def debe_enviar():
     dr = dias_restantes()
+    hoy = date.today()
+    # Prueba: enviar hoy 17 de marzo
+    if hoy == date(2026, 3, 17):
+        return True
+    # Normal: enviar del 26 al 29 de marzo
     return 0 <= dr <= DIAS_ALERTA
 
 def construir_asunto(dr):
