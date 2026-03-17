@@ -19,11 +19,11 @@ st.markdown("""
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-.stApp { background: #ffffff; color: #0f1117; }
+.stApp { background: #ffffff; color: #1a1a2e; }
 
 .header {
     padding: 2.5rem 0 1.5rem 0;
-    border-bottom: 1px solid #1a2035;
+    border-bottom: 1px solid #e2e8f0;
     margin-bottom: 2rem;
 }
 .header-title {
@@ -31,11 +31,11 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     font-size: 2.4rem;
     font-weight: 800;
     letter-spacing: -0.02em;
-    color: #0f1117;
+    color: #1a1a2e;
 }
-.header-title span { color: #22d3a5; }
+.header-title span { color: #059669; }
 .header-sub {
-    color: #4a5568;
+    color: #64748b;
     font-size: 0.9rem;
     margin-top: 0.3rem;
     font-weight: 300;
@@ -43,12 +43,12 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
 .fecha-hoy {
     display: inline-block;
-    background: #0d1829;
-    border: 1px solid #1a2e4a;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
     border-radius: 8px;
     padding: 0.4rem 1rem;
     font-size: 0.82rem;
-    color: #4a9eff;
+    color: #1d4ed8;
     font-family: 'Syne', sans-serif;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -57,24 +57,24 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 
 /* Cards principales */
 .bloque-card {
-    background: #0d1120;
-    border: 1px solid #1a2035;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     border-radius: 16px;
     padding: 1.4rem 1.6rem;
     margin-bottom: 1rem;
     transition: border-color 0.2s;
     cursor: pointer;
 }
-.bloque-card:hover { border-color: #22d3a5; }
-.bloque-card.activo  { border-left: 4px solid #22d3a5; }
-.bloque-card.proximo { border-left: 4px solid #4a9eff; }
-.bloque-card.finalizado { border-left: 4px solid #2a3550; opacity: 0.6; }
+.bloque-card:hover { border-color: #059669; }
+.bloque-card.activo  { border-left: 4px solid #059669; }
+.bloque-card.proximo { border-left: 4px solid #2563eb; }
+.bloque-card.finalizado { border-left: 4px solid #cbd5e1; opacity: 0.6; }
 
 .bloque-nombre {
     font-family: 'Syne', sans-serif;
     font-size: 1.3rem;
     font-weight: 700;
-    color: #f0f0f0;
+    color: #1a1a2e;
     margin-bottom: 0.6rem;
 }
 .bloque-badge {
@@ -88,9 +88,9 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     margin-left: 0.5rem;
     vertical-align: middle;
 }
-.badge-activo     { background: #0a2e1f; color: #22d3a5; border: 1px solid #22d3a544; }
-.badge-proximo    { background: #0a1f3a; color: #4a9eff; border: 1px solid #4a9eff44; }
-.badge-finalizado { background: #1a2035; color: #4a5568; border: 1px solid #2a3550; }
+.badge-activo     { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+.badge-proximo    { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+.badge-finalizado { background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; }
 
 /* Sub-bloques */
 .sub-bloques {
@@ -100,13 +100,13 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     margin-top: 0.8rem;
 }
 .sub-card {
-    background: #0a0f1c;
-    border: 1px solid #1a2035;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     border-radius: 10px;
     padding: 0.9rem 1rem;
 }
-.sub-card.activo-sub   { border-color: #22d3a544; background: #071a12; }
-.sub-card.proximo-sub  { border-color: #4a9eff44; background: #071224; }
+.sub-card.activo-sub   { border-color: #6ee7b7; background: #f0fdf4; }
+.sub-card.proximo-sub  { border-color: #93c5fd; background: #eff6ff; }
 .sub-card.done-sub     { opacity: 0.45; }
 
 .sub-titulo {
@@ -117,69 +117,69 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     letter-spacing: 0.1em;
     margin-bottom: 0.5rem;
 }
-.sub-titulo.t-act  { color: #22d3a5; }
-.sub-titulo.t-prox { color: #4a9eff; }
-.sub-titulo.t-done { color: #2a3a55; }
+.sub-titulo.t-act  { color: #059669; }
+.sub-titulo.t-prox { color: #2563eb; }
+.sub-titulo.t-done { color: #94a3b8; }
 
 .sub-fechas {
     font-size: 0.88rem;
-    color: #8892a4;
+    color: #64748b;
 }
-.sub-fechas strong { color: #c8d0dc; font-weight: 500; }
+.sub-fechas strong { color: #1e293b; font-weight: 500; }
 
 .dias-restantes {
     margin-top: 0.4rem;
     font-size: 0.78rem;
     font-weight: 600;
 }
-.dr-act  { color: #22d3a5; }
-.dr-prox { color: #4a9eff; }
-.dr-done { color: #2a3a55; }
+.dr-act  { color: #059669; }
+.dr-prox { color: #2563eb; }
+.dr-done { color: #94a3b8; }
 
 /* Selector */
 [data-testid="stSelectbox"] > div > div {
-    background: #0d1120 !important;
-    border: 1px solid #1a2035 !important;
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
     border-radius: 10px !important;
-    color: #f0f0f0 !important;
+    color: #1a1a2e !important;
 }
-label { color: #4a5568 !important; font-size: 0.82rem !important; }
+label { color: #64748b !important; font-size: 0.82rem !important; }
 
 /* Divider */
-.divider { border: none; border-top: 1px solid #1a2035; margin: 1.5rem 0; }
+.divider { border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0; }
 
 /* Tabla de actividades */
-.act-section { margin-top: 1.8rem; border: 1px solid #1a2035; border-radius: 14px; overflow: hidden; }
-.act-header { background: #0d1829; padding: 0.9rem 1.2rem; font-family: 'Syne', sans-serif;
+.act-section { margin-top: 1.8rem; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; }
+.act-header { background: #eff6ff; padding: 0.9rem 1.2rem; font-family: 'Syne', sans-serif;
     font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
-    color: #4a9eff; border-bottom: 1px solid #1a2035; }
-.corte-label { background: #0a1829; padding: 0.6rem 1.2rem; font-family: 'Syne', sans-serif;
-    font-size: 0.78rem; font-weight: 700; color: #4a9eff; text-transform: uppercase;
-    letter-spacing: 0.08em; border-bottom: 1px solid #1a2035;
+    color: #1d4ed8; border-bottom: 1px solid #e2e8f0; }
+.corte-label { background: #f0f9ff; padding: 0.6rem 1.2rem; font-family: 'Syne', sans-serif;
+    font-size: 0.78rem; font-weight: 700; color: #0369a1; text-transform: uppercase;
+    letter-spacing: 0.08em; border-bottom: 1px solid #e2e8f0;
     display: flex; justify-content: space-between; align-items: center; }
-.corte-pct { background: #0d2a4a; color: #4a9eff; padding: 0.15rem 0.6rem;
+.corte-pct { background: #dbeafe; color: #1d4ed8; padding: 0.15rem 0.6rem;
     border-radius: 999px; font-size: 0.72rem; }
 .act-row { display: grid; grid-template-columns: 50px 95px 95px 1fr 55px;
-    gap: 0.5rem; padding: 0.65rem 1.2rem; border-bottom: 1px solid #0f1520;
-    font-size: 0.83rem; align-items: center; }
+    gap: 0.5rem; padding: 0.65rem 1.2rem; border-bottom: 1px solid #f1f5f9;
+    font-size: 0.83rem; align-items: center; background: #ffffff; }
 .act-row:last-child { border-bottom: none; }
-.act-row.vigente { background: #071a12; }
-.act-row.proxima { background: #07121f; }
+.act-row.vigente { background: #f0fdf4; }
+.act-row.proxima { background: #eff6ff; }
 .act-row.done    { opacity: 0.45; }
-.act-semana { color: #4a5568; font-weight: 600; text-align: center; }
-.act-fecha  { color: #8892a4; font-size: 0.78rem; }
-.act-nombre strong { color: #f0f0f0; display: block; }
-.act-nombre span   { color: #6b7280; font-size: 0.78rem; }
-.act-pct    { color: #22d3a5; font-weight: 600; font-size: 0.8rem; text-align: center; }
+.act-semana { color: #94a3b8; font-weight: 600; text-align: center; }
+.act-fecha  { color: #64748b; font-size: 0.78rem; }
+.act-nombre strong { color: #1e293b; display: block; }
+.act-nombre span   { color: #94a3b8; font-size: 0.78rem; }
+.act-pct    { color: #059669; font-weight: 600; font-size: 0.8rem; text-align: center; }
 .col-headers { display: grid; grid-template-columns: 50px 95px 95px 1fr 55px;
-    gap: 0.5rem; padding: 0.5rem 1.2rem; border-bottom: 1px solid #1a2035;
-    font-size: 0.7rem; color: #2a3a55; text-transform: uppercase;
-    letter-spacing: 0.08em; font-weight: 600; }
+    gap: 0.5rem; padding: 0.5rem 1.2rem; border-bottom: 1px solid #e2e8f0;
+    font-size: 0.7rem; color: #94a3b8; text-transform: uppercase;
+    letter-spacing: 0.08em; font-weight: 600; background: #f8fafc; }
 
 /* Resumen hoy */
 .hoy-box {
-    background: #071a12;
-    border: 1px solid #22d3a544;
+    background: #f0fdf4;
+    border: 1px solid #6ee7b7;
     border-radius: 12px;
     padding: 1.2rem 1.4rem;
     margin-bottom: 1.5rem;
@@ -190,20 +190,20 @@ label { color: #4a5568 !important; font-size: 0.82rem !important; }
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: #22d3a5;
+    color: #059669;
     margin-bottom: 0.8rem;
 }
 .hoy-item {
     display: flex;
     justify-content: space-between;
     padding: 0.35rem 0;
-    border-bottom: 1px solid #0a2e1f;
+    border-bottom: 1px solid #d1fae5;
     font-size: 0.88rem;
 }
 .hoy-item:last-child { border-bottom: none; }
-.hoy-bloque { font-family: 'Syne', sans-serif; font-weight: 700; color: #f0f0f0; }
-.hoy-sub    { color: #22d3a5; font-size: 0.8rem; }
-.hoy-fecha  { color: #4a9eff; font-size: 0.8rem; }
+.hoy-bloque { font-family: 'Syne', sans-serif; font-weight: 700; color: #1a1a2e; }
+.hoy-sub    { color: #059669; font-size: 0.8rem; }
+.hoy-fecha  { color: #2563eb; font-size: 0.8rem; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -236,7 +236,8 @@ CALENDARIOS = {
 
     # 2026A (Presencial anual)
     "2026A": {"label": "2026A", "modalidades": ["Presencial"],
-              "I": (date(2026,2,2), date(2026,5,24))},
+              "I":  None,
+              "II": (date(2026,2,2), date(2026,5,24))},
 
     # 26V01
     "26V01": {"label": "26V01", "modalidades": ["Virtual","335"],
@@ -462,12 +463,12 @@ with tab1:
 
     st.markdown(f"""
     <div style="margin: 1.2rem 0 1rem 0;">
-        <span style="font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800; color:#f0f0f0">
+        <span style="font-family:'Syne',sans-serif; font-size:1.6rem; font-weight:800; color:#1a1a2e">
             {data['label']}
         </span>
         <span class="bloque-badge {badge_cls[est_gral]}">{badge_txt[est_gral]}</span>
     </div>
-    <div style="color:#4a5568; font-size:0.83rem; margin-bottom:1.2rem;">
+    <div style="color:#64748b; font-size:0.83rem; margin-bottom:1.2rem;">
         {' · '.join(data['modalidades'])}
     </div>
     """, unsafe_allow_html=True)
@@ -495,7 +496,7 @@ with tab1:
                     <div class="sub-titulo {css_titulo}">{sub_label}</div>
                     <div class="sub-fechas">
                         <strong>{fmt(rng[0])}</strong>
-                        <span style="color:#2a3a55"> → </span>
+                        <span style="color:#cbd5e1"> → </span>
                         <strong>{fmt(rng[1])}</strong>
                     </div>
                     <div class="dias-restantes {css_dr}">{dr_txt}</div>
@@ -510,7 +511,7 @@ with tab1:
                 est_sub = estado_sub(rng[0], rng[1])
                 if est_sub in ("activo", "proximo"):
                     actos = ACTIVIDADES[ACTIVIDADES_MAP[clave]]
-                    st.markdown(f"<div style='margin-top:.5rem; color:#4a5568; font-size:.78rem;'>Bloque {sub_key}: {fmt(rng[0])} → {fmt(rng[1])}</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div style='margin-top:.5rem; color:#64748b; font-size:.78rem;'>Bloque {sub_key}: {fmt(rng[0])} → {fmt(rng[1])}</div>", unsafe_allow_html=True)
                     mostrar_actividades(actos)
 
 # ══ TAB 2 ════════════════════════════════════════════════════════════════════
@@ -544,12 +545,12 @@ with tab2:
                 continue
             est2 = estado_sub(rng[0], rng[1])
             _, dr = dias_info(rng[0], rng[1])
-            color = {"activo":"#22d3a5","proximo":"#4a9eff","finalizado":"#2a3a55"}.get(est2,"#2a3a55")
+            color = {"activo":"#059669","proximo":"#2563eb","finalizado":"#94a3b8"}.get(est2,"#94a3b8")
             sub_html += f"""
             <span style="display:inline-block; margin-right:1.5rem; font-size:0.82rem;">
-                <span style="color:#4a5568; font-weight:600; text-transform:uppercase;
+                <span style="color:#94a3b8; font-weight:600; text-transform:uppercase;
                              font-size:0.7rem; letter-spacing:.08em;">{sub_label} </span>
-                <span style="color:#c8d0dc">{fmt(rng[0])} → {fmt(rng[1])}</span>
+                <span style="color:#1e293b">{fmt(rng[0])} → {fmt(rng[1])}</span>
                 <span style="color:{color}; font-size:0.75rem; margin-left:.4rem">· {dr}</span>
             </span>"""
 
@@ -559,7 +560,7 @@ with tab2:
                 {data['label']}
                 <span class="bloque-badge {badge_cls2[est_gral]}">{badge_txt2[est_gral]}</span>
             </div>
-            <div style="color:#4a5568; font-size:0.78rem; margin-bottom:.6rem">
+            <div style="color:#64748b; font-size:0.78rem; margin-bottom:.6rem">
                 {' · '.join(data['modalidades'])}
             </div>
             <div>{sub_html}</div>
