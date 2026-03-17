@@ -24,4 +24,4 @@ jobs:
         env:
           EMAIL_REMITENTE: ${{ secrets.EMAIL_REMITENTE }}
           EMAIL_PASSWORD:  ${{ secrets.EMAIL_PASSWORD }}
-        run: python enviar_alerta.py
+        run: python cun_deploy/enviar_alerta.py
