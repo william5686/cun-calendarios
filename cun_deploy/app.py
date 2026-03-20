@@ -436,8 +436,209 @@ if activos_hoy:
         </div>""", unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
+
+# ── DATOS BE ─────────────────────────────────────────────────────────────────
+PERIODOS_BE = {
+    "26I01": {"label": "26I01 · 26PI1", "actividades": [
+        {"act": "Emisión de recibo de matrícula",  "ini": date(2025,12,1),  "fin": date(2026,1,28)},
+        {"act": "Activación de saldo",              "ini": date(2025,12,1),  "fin": date(2026,2,2)},
+        {"act": "Retiros y aplazamientos",          "ini": date(2026,2,2),   "fin": date(2026,2,17)},
+        {"act": "Inicio de clases",                 "ini": date(2026,2,2),   "fin": date(2026,2,2)},
+        {"act": "Novedades de matrícula",           "ini": date(2026,2,2),   "fin": date(2026,2,13)},
+        {"act": "Cierre de actividades",            "ini": date(2026,3,22),  "fin": date(2026,3,22)},
+        {"act": "Reporte de novedades de notas",    "ini": date(2026,3,23),  "fin": date(2026,3,25)},
+        {"act": "Cierre de periodo académico",      "ini": date(2026,3,29),  "fin": date(2026,3,29)},
+    ]},
+    "26I02": {"label": "26I02 · 25PI2", "actividades": [
+        {"act": "Emisión de recibo de matrícula",        "ini": date(2026,2,2),   "fin": date(2026,3,25)},
+        {"act": "Activación de saldo",                   "ini": date(2026,2,2),   "fin": date(2026,3,30)},
+        {"act": "Matrícula prueba Reconocimiento Saberes","ini": date(2026,2,2),   "fin": date(2026,3,10)},
+        {"act": "Retiros y aplazamientos",               "ini": date(2026,3,30),  "fin": date(2026,4,14)},
+        {"act": "Inicio de clases",                      "ini": date(2026,3,30),  "fin": date(2026,3,30)},
+        {"act": "Novedades de matrícula",                "ini": date(2026,3,30),  "fin": date(2026,4,10)},
+        {"act": "Cierre de actividades",                 "ini": date(2026,5,17),  "fin": date(2026,5,17)},
+        {"act": "Reporte de novedades de notas",         "ini": date(2026,5,18),  "fin": date(2026,5,20)},
+        {"act": "Cierre de periodo académico",           "ini": date(2026,5,24),  "fin": date(2026,5,24)},
+    ]},
+    "26I03": {"label": "26I03 · 25PI3", "actividades": [
+        {"act": "Emisión de recibo de matrícula",        "ini": date(2026,3,30),  "fin": date(2026,5,20)},
+        {"act": "Activación de saldo",                   "ini": date(2026,3,30),  "fin": date(2026,5,25)},
+        {"act": "Prueba de Reconocimiento de Saberes",   "ini": date(2026,3,30),  "fin": date(2026,5,5)},
+        {"act": "Retiros y aplazamientos",               "ini": date(2026,5,25),  "fin": date(2026,6,9)},
+        {"act": "Inicio de clases",                      "ini": date(2026,5,25),  "fin": date(2026,5,25)},
+        {"act": "Novedades de matrícula",                "ini": date(2026,5,25),  "fin": date(2026,6,5)},
+        {"act": "Cierre de actividades",                 "ini": date(2026,7,12),  "fin": date(2026,7,12)},
+        {"act": "Reporte de novedades de notas",         "ini": date(2026,7,20),  "fin": date(2026,7,24)},
+        {"act": "Cierre de periodo académico",           "ini": date(2026,7,19),  "fin": date(2026,7,19)},
+    ]},
+    "26I04": {"label": "26I04 · 25PI4", "actividades": [
+        {"act": "Emisión de recibo de matrícula",        "ini": date(2026,5,25),  "fin": date(2026,7,29)},
+        {"act": "Activación de saldo",                   "ini": date(2026,5,25),  "fin": date(2026,8,3)},
+        {"act": "Prueba de Reconocimiento de Saberes",   "ini": date(2026,5,25),  "fin": date(2026,7,14)},
+        {"act": "Retiros y aplazamientos",               "ini": date(2026,8,3),   "fin": date(2026,8,18)},
+        {"act": "Inicio de clases",                      "ini": date(2026,8,3),   "fin": date(2026,8,3)},
+        {"act": "Novedades de matrícula",                "ini": date(2026,8,3),   "fin": date(2026,8,14)},
+        {"act": "Cierre de actividades",                 "ini": date(2026,9,20),  "fin": date(2026,9,20)},
+        {"act": "Reporte de novedades de notas",         "ini": date(2026,9,21),  "fin": date(2026,9,25)},
+        {"act": "Cierre de periodo académico",           "ini": date(2026,9,27),  "fin": date(2026,9,27)},
+    ]},
+    "26I05": {"label": "26I05 · 25PI5", "actividades": [
+        {"act": "Emisión de recibo de matrícula",        "ini": date(2026,8,3),   "fin": date(2026,9,23)},
+        {"act": "Activación de saldo",                   "ini": date(2026,8,3),   "fin": date(2026,9,28)},
+        {"act": "Prueba de Reconocimiento de Saberes",   "ini": date(2026,8,3),   "fin": date(2026,9,8)},
+        {"act": "Retiros y aplazamientos",               "ini": date(2026,9,28),  "fin": date(2026,10,13)},
+        {"act": "Inicio de clases",                      "ini": date(2026,9,28),  "fin": date(2026,9,28)},
+        {"act": "Novedades de matrícula",                "ini": date(2026,9,28),  "fin": date(2026,10,9)},
+        {"act": "Cierre de actividades",                 "ini": date(2026,11,15), "fin": date(2026,11,15)},
+        {"act": "Reporte de novedades de notas",         "ini": date(2026,11,16), "fin": date(2026,11,20)},
+        {"act": "Cierre de periodo académico",           "ini": date(2026,11,22), "fin": date(2026,11,22)},
+    ]},
+    "26I06": {"label": "26I06 · 25PI6", "actividades": [
+        {"act": "Emisión de recibo de matrícula",        "ini": date(2026,9,28),  "fin": date(2026,11,18)},
+        {"act": "Activación de saldo",                   "ini": date(2026,9,28),  "fin": date(2026,11,23)},
+        {"act": "Prueba de Reconocimiento de Saberes",   "ini": date(2026,9,28),  "fin": date(2026,11,3)},
+        {"act": "Retiros y aplazamientos",               "ini": date(2026,11,23), "fin": date(2026,12,8)},
+        {"act": "Inicio de clases",                      "ini": date(2026,11,23), "fin": date(2026,11,23)},
+        {"act": "Novedades de matrícula",                "ini": date(2026,11,23), "fin": date(2026,12,4)},
+        {"act": "Cierre de actividades",                 "ini": date(2027,1,10),  "fin": date(2027,1,10)},
+        {"act": "Reporte de novedades de notas",         "ini": date(2027,1,11),  "fin": date(2027,1,15)},
+        {"act": "Cierre de periodo académico",           "ini": date(2027,1,17),  "fin": date(2027,1,17)},
+    ]},
+}
+
+PLACEMENT_BE = {
+    "26I32": {"label": "26I32", "actividades": [
+        {"act": "Matrícula de estudiantes",         "ini": date(2026,2,2),   "fin": date(2026,3,25)},
+        {"act": "Toma de Placement test",           "ini": date(2026,3,30),  "fin": date(2026,5,8)},
+        {"act": "Cargue de notas y homologaciones", "ini": date(2026,5,11),  "fin": date(2026,5,17)},
+        {"act": "Cierre de periodo académico",      "ini": date(2026,5,24),  "fin": date(2026,5,24)},
+    ]},
+    "26I33": {"label": "26I33", "actividades": [
+        {"act": "Matrícula de estudiantes",         "ini": date(2026,3,30),  "fin": date(2026,5,20)},
+        {"act": "Toma de Placement test",           "ini": date(2026,5,25),  "fin": date(2026,7,3)},
+        {"act": "Cargue de notas y homologaciones", "ini": date(2026,7,6),   "fin": date(2026,7,17)},
+        {"act": "Cierre de periodo académico",      "ini": date(2026,7,19),  "fin": date(2026,7,19)},
+    ]},
+    "26I34": {"label": "26I34", "actividades": [
+        {"act": "Matrícula de estudiantes",         "ini": date(2026,5,25),  "fin": date(2026,7,29)},
+        {"act": "Toma de Placement test",           "ini": date(2026,8,3),   "fin": date(2026,9,11)},
+        {"act": "Cargue de notas y homologaciones", "ini": date(2026,9,14),  "fin": date(2026,9,25)},
+        {"act": "Cierre de periodo académico",      "ini": date(2026,9,27),  "fin": date(2026,9,27)},
+    ]},
+    "26I35": {"label": "26I35", "actividades": [
+        {"act": "Matrícula de estudiantes",         "ini": date(2026,8,3),   "fin": date(2026,9,23)},
+        {"act": "Toma de Placement test",           "ini": date(2026,9,28),  "fin": date(2026,11,6)},
+        {"act": "Cargue de notas y homologaciones", "ini": date(2026,11,9),  "fin": date(2026,11,21)},
+        {"act": "Cierre de periodo académico",      "ini": date(2026,11,22), "fin": date(2026,11,22)},
+    ]},
+    "26I36": {"label": "26I36", "actividades": [
+        {"act": "Matrícula de estudiantes",         "ini": date(2026,9,28),  "fin": date(2026,11,18)},
+        {"act": "Toma de Placement test",           "ini": date(2026,11,23), "fin": date(2027,1,1)},
+        {"act": "Cargue de notas y homologaciones", "ini": date(2027,1,4),   "fin": date(2027,1,15)},
+        {"act": "Cierre de periodo académico",      "ini": date(2027,1,17),  "fin": date(2027,1,17)},
+    ]},
+}
+
+NIVELATORIO_BE = {
+    "26I11": {"label": "26I11", "actividades": [
+        {"act": "Venta de la prueba nivelatoria",           "ini": date(2025,12,11),"fin": date(2026,1,12)},
+        {"act": "Verificación de estudiantes matriculados", "ini": date(2026,1,12), "fin": date(2026,1,14)},
+        {"act": "Corrección de novedades de matrícula",     "ini": date(2026,1,14), "fin": date(2026,1,16)},
+        {"act": "Tutorías",                                 "ini": date(2026,1,14), "fin": date(2026,1,28)},
+        {"act": "Prueba nivelatoria",                       "ini": date(2026,1,19), "fin": date(2026,1,28)},
+        {"act": "Verificación de notas",                    "ini": date(2026,1,29), "fin": date(2026,2,5)},
+        {"act": "Cargue de notas",                          "ini": date(2026,2,5),  "fin": date(2026,2,13)},
+        {"act": "Cierre del periodo",                       "ini": date(2026,2,13), "fin": date(2026,2,13)},
+    ]},
+    "26I12": {"label": "26I12", "actividades": [
+        {"act": "Venta de la prueba nivelatoria",           "ini": date(2026,1,13), "fin": date(2026,2,9)},
+        {"act": "Verificación de estudiantes matriculados", "ini": date(2026,2,9),  "fin": date(2026,2,11)},
+        {"act": "Corrección de novedades de matrícula",     "ini": date(2026,2,11), "fin": date(2026,2,13)},
+        {"act": "Tutorías",                                 "ini": date(2026,2,11), "fin": date(2026,2,25)},
+        {"act": "Prueba nivelatoria",                       "ini": date(2026,2,16), "fin": date(2026,2,25)},
+        {"act": "Verificación de notas",                    "ini": date(2026,2,26), "fin": date(2026,3,5)},
+        {"act": "Cargue de notas",                          "ini": date(2026,3,5),  "fin": date(2026,3,13)},
+        {"act": "Cierre del periodo",                       "ini": date(2026,3,13), "fin": date(2026,3,13)},
+    ]},
+    "26I13": {"label": "26I13", "actividades": [
+        {"act": "Venta de la prueba nivelatoria",           "ini": date(2026,2,10), "fin": date(2026,3,9)},
+        {"act": "Verificación de estudiantes matriculados", "ini": date(2026,3,9),  "fin": date(2026,3,11)},
+        {"act": "Corrección de novedades de matrícula",     "ini": date(2026,3,11), "fin": date(2026,3,13)},
+        {"act": "Tutorías",                                 "ini": date(2026,3,11), "fin": date(2026,3,25)},
+        {"act": "Prueba nivelatoria",                       "ini": date(2026,3,16), "fin": date(2026,3,25)},
+        {"act": "Verificación de notas",                    "ini": date(2026,3,26), "fin": date(2026,4,2)},
+        {"act": "Cargue de notas",                          "ini": date(2026,4,2),  "fin": date(2026,4,10)},
+        {"act": "Cierre del periodo",                       "ini": date(2026,4,10), "fin": date(2026,4,10)},
+    ]},
+    "26I14": {"label": "26I14", "actividades": [
+        {"act": "Venta de la prueba nivelatoria",           "ini": date(2026,3,10), "fin": date(2026,4,13)},
+        {"act": "Verificación de estudiantes matriculados", "ini": date(2026,4,13), "fin": date(2026,4,15)},
+        {"act": "Corrección de novedades de matrícula",     "ini": date(2026,4,15), "fin": date(2026,4,17)},
+        {"act": "Tutorías",                                 "ini": date(2026,4,15), "fin": date(2026,4,29)},
+        {"act": "Prueba nivelatoria",                       "ini": date(2026,4,20), "fin": date(2026,4,29)},
+        {"act": "Verificación de notas",                    "ini": date(2026,4,30), "fin": date(2026,5,7)},
+        {"act": "Cargue de notas",                          "ini": date(2026,5,7),  "fin": date(2026,5,15)},
+        {"act": "Cierre del periodo",                       "ini": date(2026,5,15), "fin": date(2026,5,15)},
+    ]},
+    "26I15": {"label": "26I15", "actividades": [
+        {"act": "Venta de la prueba nivelatoria",           "ini": date(2026,4,14), "fin": date(2026,5,11)},
+        {"act": "Verificación de estudiantes matriculados", "ini": date(2026,5,11), "fin": date(2026,5,13)},
+        {"act": "Corrección de novedades de matrícula",     "ini": date(2026,5,13), "fin": date(2026,5,15)},
+        {"act": "Tutorías",                                 "ini": date(2026,5,13), "fin": date(2026,5,27)},
+        {"act": "Prueba nivelatoria",                       "ini": date(2026,5,18), "fin": date(2026,5,27)},
+        {"act": "Verificación de notas",                    "ini": date(2026,5,28), "fin": date(2026,6,4)},
+        {"act": "Cargue de notas",                          "ini": date(2026,6,4),  "fin": date(2026,6,12)},
+        {"act": "Cierre del periodo",                       "ini": date(2026,6,12), "fin": date(2026,6,12)},
+    ]},
+    "26I16": {"label": "26I16", "actividades": [
+        {"act": "Venta de la prueba nivelatoria",           "ini": date(2026,5,12), "fin": date(2026,6,8)},
+        {"act": "Verificación de estudiantes matriculados", "ini": date(2026,6,8),  "fin": date(2026,6,10)},
+        {"act": "Corrección de novedades de matrícula",     "ini": date(2026,6,10), "fin": date(2026,6,12)},
+        {"act": "Tutorías",                                 "ini": date(2026,6,10), "fin": date(2026,6,24)},
+        {"act": "Prueba nivelatoria",                       "ini": date(2026,6,15), "fin": date(2026,6,24)},
+        {"act": "Verificación de notas",                    "ini": date(2026,6,25), "fin": date(2026,7,2)},
+        {"act": "Cargue de notas",                          "ini": date(2026,7,2),  "fin": date(2026,7,10)},
+        {"act": "Cierre del periodo",                       "ini": date(2026,7,10), "fin": date(2026,7,10)},
+    ]},
+}
+
+def estado_be(ini, fin):
+    hoy = date.today()
+    if hoy < ini: return "proximo"
+    if hoy > fin: return "finalizado"
+    return "activo"
+
+def mostrar_tabla_be(periodos):
+    hoy = date.today()
+    for codigo, data in periodos.items():
+        actos = data["actividades"]
+        ini_periodo = min(a["ini"] for a in actos)
+        fin_periodo = max(a["fin"] for a in actos)
+        est = estado_be(ini_periodo, fin_periodo)
+        em  = {"activo":"🟢","proximo":"🔵","finalizado":"⬛"}.get(est,"⬛")
+        bor = {"activo":"#6ee7b7","proximo":"#93c5fd","finalizado":"#e2e8f0"}.get(est,"#e2e8f0")
+
+        with st.expander(f"{em} **{data['label']}**  —  {fmt(ini_periodo)} → {fmt(fin_periodo)}", expanded=(est=="activo")):
+            for a in actos:
+                ini_a, fin_a = a["ini"], a["fin"]
+                if ini_a <= hoy <= fin_a:
+                    row_bg = "#f0fdf4"; txt_col = "#065f46"; dot = "🟢"
+                elif ini_a > hoy:
+                    row_bg = "#eff6ff"; txt_col = "#1e40af"; dot = "🔵"
+                else:
+                    row_bg = "#f8fafc"; txt_col = "#94a3b8"; dot = "⬛"
+                fin_str = fmt(fin_a) if fin_a != ini_a else ""
+                rng_str = f"{fmt(ini_a)} → {fin_str}" if fin_str else fmt(ini_a)
+                st.markdown(f"""
+                <div style="display:flex;justify-content:space-between;align-items:center;
+                            background:{row_bg};border-radius:8px;padding:0.5rem 0.9rem;
+                            margin-bottom:0.3rem;border-left:3px solid {bor};">
+                    <span style="color:{txt_col};font-size:0.85rem;">{dot} {a['act']}</span>
+                    <span style="color:#64748b;font-size:0.78rem;font-family:'Syne',sans-serif;">{rng_str}</span>
+                </div>""", unsafe_allow_html=True)
+
 # ── TABS ──────────────────────────────────────────────────────────────────────
-tab1, tab2 = st.tabs(["🔍 Buscar bloque", "📋 Todos los bloques"])
+tab1, tab2, tab_be = st.tabs(["🔍 Buscar bloque", "📋 Todos los bloques", "🌐 Calendario BE"])
 
 # ══ TAB 1 ════════════════════════════════════════════════════════════════════
 with tab1:
@@ -565,3 +766,33 @@ with tab2:
             </div>
             <div>{sub_html}</div>
         </div>""", unsafe_allow_html=True)
+
+# ══ TAB BE ═══════════════════════════════════════════════════════════════════
+with tab_be:
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="background:#faf5ff;border:1px solid #e9d5ff;border-radius:12px;
+                padding:1rem 1.4rem;margin-bottom:1.5rem;">
+        <div style="font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;
+                    text-transform:uppercase;letter-spacing:.12em;color:#7c3aed;margin-bottom:.3rem;">
+            🌐 Área Bilingüe — BE
+        </div>
+        <div style="color:#64748b;font-size:0.85rem;">
+            Calendarios de Períodos BE, Placement y Nivelatorio. Los períodos activos aparecen expandidos automáticamente.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    be_sub1, be_sub2, be_sub3 = st.tabs(["📘 Períodos BE", "🔤 Placement", "📝 Nivelatorio"])
+
+    with be_sub1:
+        st.markdown("<br>", unsafe_allow_html=True)
+        mostrar_tabla_be(PERIODOS_BE)
+
+    with be_sub2:
+        st.markdown("<br>", unsafe_allow_html=True)
+        mostrar_tabla_be(PLACEMENT_BE)
+
+    with be_sub3:
+        st.markdown("<br>", unsafe_allow_html=True)
+        mostrar_tabla_be(NIVELATORIO_BE)
