@@ -25,6 +25,7 @@ DESTINATARIOS = [
     ("Mónica Pachón",      "monica_pachon@cun.edu.co"),
     ("Leidy Díazgranados", "leidy_diazgranados@cun.edu.co"),
     ("Julián Chavista",    "julian_chavista@cun.edu.co"),
+    ("William Estrada",    "william_estrada@cun.edu.co"),
 ]
 
 # ── LÓGICA ────────────────────────────────────────────────────────────────────
