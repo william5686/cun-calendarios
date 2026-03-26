@@ -28,7 +28,6 @@ DESTINATARIOS = [
     ("Elkin Ignacio Rodríguez Carrero", "elkin_rodriguezca@cun.edu.co"),
     ("Gillyam Germán Martínez Bernal",  "gillyam_martinez@cun.edu.co"),
     ("Heidy Johanna Quiroga Aguilar",   "heidy_quiroga@cun.edu.co"),
-    ("Laura Daniela Gómez Arenas",      "laura_gomeza@cun.edu.co"),
     ("Maira Alejandra Doncel Largo",    "maira_doncel@cun.edu.co"),
     ("William Estrada Santis",          "william_estrada@cun.edu.co"),
 ]
