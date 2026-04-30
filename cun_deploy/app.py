@@ -796,3 +796,93 @@ with tab_be:
     with be_sub3:
         st.markdown("<br>", unsafe_allow_html=True)
         mostrar_tabla_be(NIVELATORIO_BE)
+
+DIAS_KUN = [
+    {"num": 1, "dia": "Jueves",    "fecha": date(2026, 5,  7)},
+    {"num": 2, "dia": "Lunes",     "fecha": date(2026, 5, 25)},
+    {"num": 3, "dia": "Jueves",    "fecha": date(2026, 6,  4)},
+    {"num": 4, "dia": "Martes",    "fecha": date(2026, 6, 16)},
+    {"num": 5, "dia": "Miércoles", "fecha": date(2026, 6, 24)},
+    {"num": 6, "dia": "Lunes",     "fecha": date(2026, 7,  6)},
+    {"num": 7, "dia": "Miércoles", "fecha": date(2026, 7, 15)},
+    {"num": 8, "dia": "Lunes",     "fecha": date(2026, 7, 27)},
+]
+
+with tab_kun:
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Banner
+    st.markdown("""
+    <div style="background:#eff6ff;border:1px solid #93c5fd;border-radius:12px;
+                padding:1rem 1.4rem;margin-bottom:1.5rem;">
+        <div style="font-family:'Syne',sans-serif;font-size:0.75rem;font-weight:700;
+                    text-transform:uppercase;letter-spacing:.12em;color:#1d4ed8;margin-bottom:.3rem;">
+            📍 Días KUN — Coworking Chapinero
+        </div>
+        <div style="color:#64748b;font-size:0.85rem;">
+            8:00 AM – 6:00 PM · Se envía recordatorio automático 1 día antes de cada fecha.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Tarjetas de cada día KUN
+    for d in DIAS_KUN:
+        diff = (d["fecha"] - hoy).days
+        if diff < 0:
+            est_kun = "finalizado"
+            em_kun  = "⬛"
+            bg      = "#f8fafc"
+            borde   = "#e2e8f0"
+            txt     = "#94a3b8"
+            badge_bg = "#f1f5f9"; badge_txt = "#64748b"
+            etiqueta = "Finalizado"
+        elif diff == 0:
+            est_kun = "hoy"
+            em_kun  = "🟢"
+            bg      = "#f0fdf4"
+            borde   = "#6ee7b7"
+            txt     = "#065f46"
+            badge_bg = "#d1fae5"; badge_txt = "#065f46"
+            etiqueta = "¡HOY!"
+        elif diff == 1:
+            est_kun = "manana"
+            em_kun  = "🟡"
+            bg      = "#fefce8"
+            borde   = "#fde68a"
+            txt     = "#92400e"
+            badge_bg = "#fef3c7"; badge_txt = "#92400e"
+            etiqueta = "¡MAÑANA!"
+        else:
+            est_kun = "proximo"
+            em_kun  = "🔵"
+            bg      = "#eff6ff"
+            borde   = "#93c5fd"
+            txt     = "#1e40af"
+            badge_bg = "#dbeafe"; badge_txt = "#1e40af"
+            etiqueta = f"En {diff} días"
+
+        st.markdown(f"""
+        <div style="background:{bg};border:1px solid {borde};border-left:4px solid {borde};
+                    border-radius:12px;padding:1rem 1.4rem;margin-bottom:0.7rem;
+                    display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <span style="font-family:'Syne',sans-serif;font-size:0.72rem;font-weight:700;
+                             text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;">
+                    Día KUN #{d['num']}
+                </span><br>
+                <span style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;
+                             color:{txt};">
+                    {em_kun} {d['dia']} {d['fecha'].strftime('%d/%m/%Y')}
+                </span>
+                <span style="color:#94a3b8;font-size:0.82rem;margin-left:0.5rem;">
+                    · 8:00 AM – 6:00 PM · Coworking Chapinero
+                </span>
+            </div>
+            <div>
+                <span style="background:{badge_bg};color:{badge_txt};padding:0.3rem 0.8rem;
+                             border-radius:999px;font-size:0.75rem;font-weight:700;
+                             font-family:'Syne',sans-serif;">
+                    {etiqueta}
+                </span>
+            </div>
+        </div>""", unsafe_allow_html=True)
