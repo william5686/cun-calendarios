@@ -635,7 +635,7 @@ def mostrar_tabla_be(periodos):
                             margin-bottom:0.3rem;border-left:3px solid {bor};">
                     <span style="color:{txt_col};font-size:0.85rem;">{dot} {a['act']}</span>
                     <span style="color:#64748b;font-size:0.78rem;font-family:'Syne',sans-serif;">{rng_str}</span>
-                </div>""", unsafe_allow_html=True)
+                </div>""", unsafe_allow_html=True) 
 
 # ── TABS ──────────────────────────────────────────────────────────────────────
 tab1, tab2, tab_be = st.tabs(["🔍 Buscar bloque", "📋 Todos los bloques", "🌐 Calendario BE"])
