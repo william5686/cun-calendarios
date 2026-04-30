@@ -1,0 +1,27 @@
+name: Alerta Días KUN
+
+on:
+  schedule:
+    - cron: '0 13 * * *'  # Todos los días a las 8:00 AM hora Colombia (UTC-5)
+  workflow_dispatch:       # Permite ejecutarlo manualmente
+
+jobs:
+  enviar-alerta-kun:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: pip install secure-smtplib
+
+      - name: Ejecutar script de alerta Días KUN
+        env:
+          EMAIL_REMITENTE: ${{ secrets.EMAIL_REMITENTE }}
+          EMAIL_PASSWORD:  ${{ secrets.EMAIL_PASSWORD }}
+        run: python cun_deploy/enviar_alerta_kun.py
